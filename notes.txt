@@ -1,0 +1,152 @@
+No overflow
+You can use single and double quotes.
+'as\n\t'
+print(_)
+underscore is the return value of the last thing you used
+_number gives you the result from number (e.g. _6)
+
+python2:
+5 / 2 = 2
+5 / 2.0 = 2.5
+python3:
+5 / 2 = 2.5
+5 // 2 = 2
+2 ** 10 = pow(2,10) = 1024
+
+''' is a multiline strings:
+'''
+asf
+asd
+fas
+fasd
+f'''
+Gives you the newlines and everything.
+
+r'' is a raw string, it's like, it does not use the escape symbols (\)
+r'\n\t' will then be '\\n\\t'
+
+help(name) gives you the documentation for the function
+or in linux use print?
+
+print('nonni,'gunni','agust')
+will print: nonni gunni agust
+
+print('asdf', end='lol') will print: asdflol
+print('nonni,'gunni','agust', sep=", ") will print: nonni, gunni, agust
+
+print is also a statement:  print nonni
+
+there is no double in python, only float
+a = 4.12
+type(a)
+<class 'float'>
+
+dir() is a function that shows you everything that you can use at this point.
+dir(a) will give you all functions that you can use on a
+print and everything are in __builtins__. check dir(__builtins__)
+
+everything in python is an object (also the functions)
+
+(5).__add__(12) = 5 + 12
+
+__func__ are either private functions or functions that can be used with another way. 
+
+pow(4,5,7) = 4^5 modulo 7, modulo is used to stop overflow
+
+bin(1337) is a string of binary: 0b10100111001
+int(_,2) is binary to int (base 2)
+hex(1337) = 0x539
+int(_,16)
+oct(1337) = 0o2471
+
+We use list instead of an array
+a = [1,2,3,4,5]
+don't have to use the same type:
+a.extend([1,2,3,4,5]) = [1,2,3,4,5,1,2,3,4,5]
+a.append([1,2,3,4,5]) = [1,2,3,4,5,1,2,3,4,5,[1,2,3,4,5])
+can access the other list with: a[10][1] = 2
+or a += [3]
+a.remove(3) # removes the first 3 from the list
+a.pop() # removes the last item
+a.count(2) # counts how many 2 are, but does not go into other lists
+
+stack = []
+stack.insert(0, 15) = [15]
+stack.insert(0, 50) = [50, 15]
+
+don't use a[len(a)-1], but use a[-1] instead.
+
+     6  3  8  1
+ind  0  1  2  3
+    -4 -3 -2 -1
+
+
+XOR = 5^2
+OR = 5|3
+1|2|3|8 = 15
+1&2&4&7 = 0
+
+id(a) gives you the memory address of a
+
+2 << 23 works as in the C family
+
+sum(a), max(a), min(a)
+
+sum([ [1], [2,3], [4,5] ], [])
+[1,2,3,4,5]
+
+no character in python, uses strings
+ord() changes character to a number
+chr() changes a number to a character
+ord('A')
+chr(65)
+
+always use 4 in indent
+
+list(range(10)) changes the range to a list
+
+iter(lis) gives you an iterator of the list lis
+it = iter(lis)
+next(it) gives you the next item in the list and throws it out
+
+list = [1,2,3,4]
+it = iter(lis)
+while True:
+    try:
+        i = next(it)
+        print(i)
+    except StopIteration:
+        break
+
+None is null in python
+use e.g. if b is None
+
+position argument
+you can set a default value for parameters:
+def fun(a,b,c=0): ...
+fun(a,b,d=1)
+
+def fun(*args, **kwargs):
+    print(kwargs)
+args are many arguments(parameters), e.g. fun(1,2,4,4,5,6....)
+fun(12,3,5,6,b=True)     ... here the keywargs argument is b=True, Now you can use any parameter whatsoever
+
+**dict is to print every key in a dictionary.
+*list is to print every key in a list.
+print(*lis, **d)
+
+if we have a global value and we are not using them as constant, we need to specify in the function that they are global
+bla2 = ''
+def bla():
+    global bla2
+
+if we specify a string at the first line of a function, then this string will be the doc string.
+def fun():
+    '''
+    omg blabla bla
+    '''
+help(fun)
+
+
+
+
