@@ -147,6 +147,66 @@ def fun():
     '''
 help(fun)
 
+if you don't want to continue an if statement, you should do pass:
+if blabla:
+    pass
+else:
+
+Annadhvert stak:
+lis[2:6:2]
+
+In order to create a tuple of one element, you have to put comma in the back:
+b = (1,)
+
+nota enumerate is stad:
+for i in range(len(lis)):
+    print(i, lis[i])
+
+enumerate([5,2,3,4,1])
+
+for i, n in enumerate(lis):
+    print(i, n)
+this is the same as before, called unpacking.
+
+don't need () to write tuples... 2,4,5 is the same as (2,4,5)
+
+divmod(5,2) = (2,1)   this is (5/2, 5%2)
+
+div, mod = divmod(2,5)   so div = 2 and mod = 1
+
+a = (1,2,3)
+x,*y = a  so x = 1 and y = [2,3]
+
+a, = lis   ==   a = lis[0]
+
+[ i for i in range(10) if i % 3 == 2 ]
+
+set is constant lookup but list is linear
+
+list(set(lis)) hendir ut endurtekningum
+
+for key, val in sorted(d.items()):
+    print(key,val)
+
+'this is fun'.capitalize()  sets the first char to cap, then there is .upper(), 
+.swapcase(), lower(), title()
+
+x.rjust(30, 'X') fills 30 x before word,, and then .ljust()
+x.endswith() startswith()
+
+x.split(maxsplit=1) = x.split(None,1)
+
+don't use 'asdf' + ' asdf'. To concatenate strings:
+'%d %f' % (5, 5.3)    also %s.. so can use '%s' % 'lala'... also '%r' which is representation
+And then the new way:
+x = '''Username: {0}
+Password: {1}'''
+x.format('nonni', 'wat') or:
+{x} and {y} and then x.format(x='nonni', y='wat')
+
+
+
+
 
 
 
