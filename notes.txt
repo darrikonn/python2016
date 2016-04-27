@@ -204,6 +204,158 @@ Password: {1}'''
 x.format('nonni', 'wat') or:
 {x} and {y} and then x.format(x='nonni', y='wat')
 
+[x+3 for x in lis] == map(add_3, lis)
+
+f = lambda: 'yayy'
+f() = 'yayy'
+
+f = lambda x: 5 + x
+f(5) = 10
+
+filter(lambda x: len(str(x)) == 2, lis)
+list(_)   =  [27, 64]
+
+f = lambda x, y: x ** y
+f(4,5) = 1024
+
+for i in range(min(len(a), len(b))):
+    print(a[i], b[i])
+ekki gera thetta, nota frekar zip:
+for i in zip(a, b):
+    print(a[i], b[i])
+zip returns the zip object, so use list(zip)
+or just simply:
+for x,y in zip(a,b):
+    print(x,y)
+
+studs = [('darri', 8), ('david', 9), ('jon', 5)]
+grade = zip(*studs) = [('darri','david','jon'),(8,9,5)]
+*studs takes every first element in a list and puts it in a list, and every second element and puts it in another list:
+grade[1]/len(grade[1]) gives you the average grade
+
+import functools as func
+from functools import partial as par
+
+import functools
+list(map(partial(pow, 2), range(10)))
+
+import operator
+these are all the operators
+list(map(partial(operator.add,5),range(10)))
+
+map(str.split, data.splitlines())
+list(map(lambda x: x.split() data.splitlines()))
+
+from pprint import pprint
+pprint(sorted)
+
+sorted(data, key=lambda x: x[2])
+sorted(data, key=lambda x: (x[2], x[0])
+verdicts = ['abc', 'aaa', 'er']
+sorted(data, key=lambda x: (x[2], x[0], verdicts.index(x[1])))
+
+from functools import reduce
+reduce(lambda x,y: x+y, range(100), 0)
+reduce(lambda x,y: '{0}{1}'.format(x,y), ['a','b','c'],'')
+
+import itertools
+c = itertools.cycle('ABCD')
+next(c) can be called always
+
+for s, g in zip(students, itertools.cycle('ABCD)):
+    print(s,g)
+and set(students) gives you unique
+and sorted(set(students))
+
+lis = [[1,2,3],[4,5,6],[7,8,9]]
+list(itertools.chain(*lis))
+gives you the list: [1,2,3,4,5,6,7,8,9]
+
+x = itertools.cycle('abc')
+itertools.isslice(x,6)
+itertools.isslice(x,2,5)
+
+the regular zip stops after the shortest list, but zip_longest stops after the longest list
+list(itertools.zip_longest([1,2,3,4],[2,2], fillvalue=0)):
+[(1,2), (2,2), (3,0), (4,0)]
+
+def contains_pair(lis):
+    for a,b in zip(lis, lis[1:]):
+        if a == b:
+            return True
+    return False
+
+from operator import sub
+from itertools import starmap
+def contains_pair(lis):
+    return not all(a - b for a,b in zip(lis, lis[1:]))
+
+def contains_pair(lis):
+    return not all(starmap(sub,zip(lis, lis[1:])))
+
+from itertools import product
+product([1,2,3],[4,5,6])
+= [(1,4), (1,5), (1,6), 2...,3...,]
+
+list(map(''.join, product('abc','abc')))
+list(map(''.join, product('abc', repeat=4)))
+
+word = {'dog', 'cat', 'horse'}
+letters = 'alf'
+
+from itertools import permutations
+for x in perutations(letters):
+    if ''.join(x)) in word:
+        print('yay',x)
+synir allar umradanir af thessum stokum
+can also check of every length
+for i,_ in enumerate(letters):
+    for x in perutations(letters, i):
+        if ''.join(x)) in word:
+            print('yay',x)
+
+the difference between combinations and permutations is that the order doesn't matter.
+from itertools import combinations
+combinations('abc',2)
+
+def _do_test(list, expected):
+    assert contains_pair(lis) == expected, lis
+
+def test():
+    _do_test([], False)
+    _do_test([1], False)
+    _do_test([1,1], True)
+    _do_test([1,2], False)
+    _do_test(range(100), False)
+    _do_test(list(range(100))+[99], True)
+    
+
+from itertools import combinations
+def partition(lis):
+    n = len(lis)
+    for i in range(1, n):
+        res = []
+        for c in combinations(range(0, n-1), i):
+            c = (0,) + c
+            for s, e in zip(c, c[1:]):
+                resp.append(lis[s:e+1])
+            res.append(lis[c[-1]+1:])
+            #print(res)
+            res = []
+
+
+yield vistar stateid a fallinu i stadinn fyrir return.. getum gert next a fallid.
+
+
+
+
+
+
+
+
+
+
+
 
 
 
