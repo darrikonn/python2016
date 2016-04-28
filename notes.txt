@@ -346,9 +346,74 @@ def partition(lis):
 
 yield vistar stateid a fallinu i stadinn fyrir return.. getum gert next a fallid.
 
+groupby
 
+{x:list(y) for x,y in groupby(sorted(names))}
 
+res = input('Enter a number: ')
+res = input()
+asdf asdf asd f                (like getline)
 
+raw_input
+eval('5+3-12')    gives you the int -4
+eval('5+3-a') gives you the variable a.. but can use:
+eval('5+3-a', dict())
+
+exec('b=12')
+
+import string
+string.ascii_lowecase
+
+import sys
+sys.stdout.write('halo\n')
+returns halo and then how many bytes went into the stream
+
+sys.stdin.read()
+sys.stderr.write('error')
+
+import os
+os.getcwd()
+
+open(r'path/to/file')
+f.seek(0) if we want to start again to read, because these are streams (act similar to iterators, eat up the file)
+f.readline()
+f.readline(
+next(f)
+
+f.readlines()
+f.read().splitlines()
+
+dict(map(str.split, f.read().splitlines()))
+
+f = open('bad.txt', encoding='latin1')
+f = open('bad.txt', encoding='utf-8')
+
+f = open('bad.txt', mode='rb')
+type(f.read()) = bytes
+b.decode('utf-8')
+
+f.write()
+f.flush()
+f.close()
+
+open('b.txt', 'a')   appends but 'w' override s
+
+from datetime import datetime
+datetime.now()
+datetime.max
+datetime.min
+
+day = timedelta(days=1)
+datetime.now() + day
+
+import pdb
+pdb.set_trace()     sets a break point
+l           shows the code
+n           next line -> step over
+s           next line -> step in
+c           continue
+variable    shows what is in variable
+enter       performs the previous command
 
 
 
