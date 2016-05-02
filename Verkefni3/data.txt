@@ -1,0 +1,3 @@
+Hjalti Magnússon,Eggs,10,80
+Hjalti Magnússon,Spam,1,350
+Bjarki Ágúst Guðmundsson,"Spam, spam, spam",1000000000,0

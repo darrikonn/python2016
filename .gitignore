@@ -60,3 +60,6 @@ target/
 
 #Ipython Notebook
 .ipynb_checkpoints
+
+# Skip the downloads directory from Verkefni 4
+Verkefni4/downloads

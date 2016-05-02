@@ -415,12 +415,143 @@ c           continue
 variable    shows what is in variable
 enter       performs the previous command
 
+import re
+m = re.search('nonni', 'Hann nonni er alltaf uti')
+m.group()
+m.start()
+m.end()
+
+m = re.search('e.', s)
+possible is er or ea or ei or e.
+m = re.search('e..', s)     possible ert eru ... 
+
+^ is in front,, and $ is last
+m = re.search('^Hann', s)   does the string start with Hann
+m = re.search('uti$', s)    does the string end with uti
+
+m = re.search('n.* ', s)    is something that start with n and there can be anything behind, but ends with whitespace
+* is greedy, tries to find the last match
+returns ' nonni er alltaf '
+m = re.search(' n.*? ', s)   now it is non greedy., just returns ' nonni '
+
+m = re.search('er.+ alltaf', s) gives none but if + were *, then is it 'er alltaf'
+
+m = re.search('-?[0-9]+', '-123987')  gives -123987
+
+re.search('a{3,6}', 'blaaaa')   gives three to six a, but tries the most.. otherwise ?
+
+re.search('[abc]', 'a').group()
+re.search('[a-z]', 'a').group()
+
+| is match left side ooor right side
+re.search('[a-c]{2}|lol', 'haall').group()  returns 'aa'
+
+searcher = re.compile('timeout:\s*(.*)')
+
+re.match('abc', 'abcde')
+re.fullmatch('abc', 'asdf') == re.match('^abc$', 'asdf')
+
+re.split
+
+re.sub('(Manchester|Leeds) United', 'Ronnie Cool', 'Leeds United rocks!')
+returns Ronnie Cool rocks
+
+sent = re.comile(r'[A-ZÁÐÉÍÞÓÚÆ]\w*[!?.]')
+if we want to include dash, we do
+sent = re.comile(r'[A-ZÁÐÉÍÞÓÚÆ][\w\s-]*[!?.]')         \s is with space
+plainVanilla = '''Tuttugu og sjo starfsmonnum var sagt upp blablabla'''
+sent.findall(plain_vanilla)
+
+lex = re.compile(r'(?P<oper>[-+*()=;])|(?P<print>print)|(?P<end>end)|(?P<id>[A-Za-z]+)|(?P<num>[0-9]+)')
+lex.findall('''var = 3; b = 4*(7-var); print b; end''')
+for x in lex.finditer(prog):
+    print([(a,b) for a,b in x.groupdict().items() if b][0])
+
+os.getcwd()
+os.listdir()            == ls
+os.chdir('python')      == dc
+os.mkdir('yay')     == mkdir yay
+os.makedirs(r'lol/wat')      == mkdir -p lol/wat
+for x in os.walk(.):
+    print(x)
+for root,dirs,files in os.walk('.'):
+    print(root, dirs, files)
+
+os.system('notepad')
+
+dir = os.path.join('python', 'yay')
+os.path.splitext('yay.tar.gz') = ['yay.tar', 'gz']
+
+can also use shutil
+
+import glob
+glob('*1[0-1]')
+glob('*1[0-1]/*')
+
+# create grep application
+import re, os, sys
+PATH='/home/hjalti/doc/dev/exam'
+RE=r'^ *dev \w+\(.*\d+.*\)'
+CRE = re.compile(RE)
+for root, dirs, files in os.walk(PATH):
+    for f in files:
+        path = os.path.join(root, f)
+        try:
+            with open(path) as cf:
+                lines = cf.read().splitlines()
+                for li in lines:
+                    if CRE.search(li):
+                        print(path, li)
+        except:
+            sys.stderr.write('could not open\n' % path)
+
+To parse json objects:
+jason = """json object'''
+don't use eval(jason)
+import json
+# dumps serializes to a string, but dump to a file
+json.dumps(jason)
+json.dump(data, file, indent=2)
+
+from xml.etree import ElementTree as ET
+et = ET.parse('test.xml')
+r = et.getroot()
+r.getchildren()
+r.find('projects')
+r.findall('.//edition')
+et.findall(".//edition[@language='English']")
+x = et.findall(".//edition[@language='English']/../..")
+x.tag()
+x.keys()
+x[0]
+
+import pickle
+f = open('bla.pickle', 'wb')
+pickle.dump(data, f)
+f.close()
+
+import urllib.request
+json.loads(urllib.request.urlopen('www.fotbolti.net').read().decode('utf-8'))
+resp['results']
+resp['results'][0]['status']
+for x,y in resp['results'][0].items():
+    print(x,y)
+
+import logging
+logger = logging.getLogger(__name__)
+logger = logging.getLogger('test')
+logger.error('shii')
+logger.fatal('shii')
+logger.warning('shii')
+logger.info('shii')
+logger.debug('shii')
 
 
-
-
-
-
+logging.basicConfig(level=logging.DEBUG,
+                    filename='test.log',
+                    filemode='w',
+                    format='%(asciitime)-15s $(level)'
+                    #stream=sys.stdout)    # CRITICAL, 51     w = overwrites
 
 
 
