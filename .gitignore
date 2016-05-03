@@ -63,3 +63,4 @@ target/
 
 # Skip the downloads directory from Verkefni 4
 Verkefni4/downloads
+Verkefni3/nofn.json
