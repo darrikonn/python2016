@@ -553,6 +553,59 @@ logging.basicConfig(level=logging.DEBUG,
                     format='%(asciitime)-15s $(level)'
                     #stream=sys.stdout)    # CRITICAL, 51     w = overwrites
 
+grep "5 [0-9]" file
+
+import argparse
+
+def re_type(s):
+    try:
+        re.compile(s)
+    except:
+        raise argparse.ArgumentTypeError('Invalid regex')
+    return s
+
+parser = argparse.ArgumentParser(description='Process some integers') <-- see documentation
+
+parser = argparse.ArgumentParser(dectiption='Grep some')
+parser.add_argument('pattern', metavar='PATTERN', type=re_type,
+                    help='an integer for the accumulator')
+parser.add_argument('file', metavar='FILE', type=argparse.FileType('r'),
+                    help='an integer for the accumulator')
+parser.add_argument('-i', '--ignore-case', action='store_true', default=false,
+                    help='Ignores the case of pattern')
+parser.add_argument('-C', '--context', tyle=int, default=0
+                    help='Print context of matches (default: %(default)s)')
+args = parser.parse_args()
+flags = 0
+if args.ignore_case:
+    flags |= re.I
+p = re.compile(args.pattern, flags)
+lines = args.file.read().splitlines()
+for i, line in enumerate(lines):
+    if p.search(line):
+        print('\n'.join(lines[i-args.context:i+args.context+1]))
+
+
+with open automatically calls f.close() in the end
+== f = open() and f.close()
+
+
+#!/usr/bin/env python3
+chmod u+x test.py
+./test.py
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
