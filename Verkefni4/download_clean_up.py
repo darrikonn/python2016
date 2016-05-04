@@ -29,19 +29,20 @@ def initialize(ROOT):
     create_directories(os.path.join(ROOT, 'TV-Shows'))
     create_directories(os.path.join(ROOT, 'Other (unsorted)'))
 
-def remove_file(filename):
+def remove_directory(directory):
     if os.path.isdir(filename):
         try:
             if os.listdir(filename) == []:
                 os.rmdir(filename)
         except:
             sys.stderr.write('Could not remove the directory {0}'.format(filename))
-    else:
-        try:
-            if os.path.exists(filename):
-                os.remove(filename)
-        except:
-            sys.stderr.write('Could not remove file {0}'.format(filename))
+
+def remove_file(filename):
+    try:
+        if os.path.exists(filename):
+            os.remove(filename)
+    except:
+        sys.stderr.write('Could not remove file {0}'.format(filename))
 
 def get_configurations(PATH):
     with open(PATH) as cf:
@@ -50,21 +51,30 @@ def get_configurations(PATH):
                 'Subtitles': items['ValidSubtitleFileExtensions'],
                 'Books': items['ValidBookFileExtensions'],
                 'Exclude': items['ExcludeDirectories'],
+                'Video': items['ValidVideoFileExtensions'],
                 'Songs': items['ValidSongFileExtensions']}
 
+def check_file_extension(f, key):
+    return any(f for x in key if f.endswith(x))
 
-def clean_up(args):
+def sort_files(args):
     TV_RE = r'(.*)(?: ?s ?| ?season ?| ?\[ ?|\.)(\d+)(?: ?e ?| ?episode ?| ?x ?)(\d+)'
     TV_CRE = re.compile(TV_RE, re.I)
     config = get_configurations(args.config_filename)
     initialize(args.filename)
-    for root, dirs, files in os.walk(args.filename):
+    for root, dirs, files in os.walk(args.filename, topdown=False):
         for f in files:
             tv_show = TV_CRE.findall(f)
             path = os.path.join(root, f)
-            if any(f for x in config['NonValid'] if f.endswith(x)):
+            #print(os.path.dirname(path))
+            if check_file_extension(f, config['NonValid']):
                 # delete file and continue
                 remove_file(path)
+            elif check_file_extension(f, config['Songs']):
+                parent_folder = '{0}{1}'.format('Songs/',
+                        ' '.join(f[:f.rfind('.')].split('.')).strip())
+                create_directories(os.path.join(args.filename, parent_folder))
+                move_files(path, os.path.join(args.filename, parent_folder + '/' + f))
             elif tv_show:
                 parent_folder = '{0}{1}{2}{3}'.format('TV-Shows/',
                         ' '.join(tv_show[0][0].split('.')).strip().title(),
@@ -72,8 +82,20 @@ def clean_up(args):
                         '/Episode ' + str(int(tv_show[0][2])))
                 create_directories(os.path.join(args.filename, parent_folder))
                 move_files(path, os.path.join(args.filename, parent_folder + '/' + f))
-        # directory gets deleted if it's empty
-        remove_file(root)
+            elif check_file_extension(f, config['Video']):
+                parent_folder = '{0}{1}'.format('Movies/',
+                        ' '.join(f[:f.rfind('.')].split('.')).strip())
+                create_directories(os.path.join(args.filename, parent_folder))
+                move_files(path, os.path.join(args.filename, parent_folder + '/' + f))
+            else:
+                parent_folder = '{0}{1}'.format('Other (unsorted)/',
+                        ' '.join(f[:f.rfind('.')].split('.')).strip())
+                create_directories(os.path.join(args.filename, parent_folder))
+                move_files(path, os.path.join(args.filename, parent_folder + '/' + f))
+
+        if root == args.filename:
+            for d in dirs:
+                remove_directory(d)
 
 def validate_file(parser, filepath):
     if os.path.exists(filepath):
@@ -98,7 +120,7 @@ def main():
 
     print('Processing...')
     try:
-        clean_up(args)
+        sort_files(args)
         print('Succeeded!')
     except:
         sys.stderr.write('Error while cleaning up the downloads directory!')

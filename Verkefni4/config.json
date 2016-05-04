@@ -7,7 +7,9 @@
         ".png",
         ".txt",
         ".dat",
-        ".db"
+        ".db",
+        ".url",
+        ".ignore"
     ],
     "ValidSubtitleFileExtensions": [
         ".srt",
@@ -23,6 +25,16 @@
     "ValidSongFileExtensions": [
         ".mp3"
     ],
+    "ValidVideoFileExtensions": [
+        ".AVI",
+        ".avi",
+        ".mkv",
+        ".mp4"
+    ],
     "ExcludeDirectories":[
+        "Movies",
+        "TV-Shows",
+        "Books",
+        "Songs"
     ]
 }
