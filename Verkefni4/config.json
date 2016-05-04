@@ -1,0 +1,22 @@
+{
+    "NonValidFileExtensions": [
+        ".nfo",
+        ".jpg",
+        ".torrent",
+        ".jpeg",
+        ".png"
+    ],
+    "ValidSubtitleFileExtensions": [
+        ".srt",
+        ".sub",
+        ".sbv"
+    ],
+    "ValidBookFileExtensions": [
+        ".mobi",
+        ".epub",
+        ".azw3",
+        ".pdf"
+    ],
+    "ValidSongFileExtensions": [
+    ]
+}

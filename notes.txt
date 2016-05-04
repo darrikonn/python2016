@@ -594,8 +594,165 @@ with open automatically calls f.close() in the end
 chmod u+x test.py
 ./test.py
 
+import subprocess
+subprocess.run(['ls', 'folder'])
+subprocess.run(['grep', '-R', 'main'])
+subprocess.run(['grep', '-R', 'main'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True)
+a = subprocess.run('grep -R main', shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True)
+a.stdout
+str_input='''1 2 3 4'''
+subprocess.run(['python', 'test.py'], input=str_input, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True)
+
+py -m pip       keyrdu thennan module sem scriptu
+py -m pip install passgen
+import passgen
+passgen.passgen()
+
+virtualenv
+deactivate
+
+pip freeze
+
+py -m pip install --upgrade pip
+
+class Fun():    ef hann erfir eitthvad, tha er thad inni i sviga
+class Fun:
+    var = 3
+
+f = Fun()
+Fun.var #= 3
+f.var  #= 3
+f.var = 12
+Fun.var  #= 3
+f.var   #= 12
+
+can use enum as a class
+class Suit:
+    Heart = 0
+    Spade = 1
+    Diamond = 2
+    Club = 3
+
+Suit.Heart
+
+To create a constructor then you use def __init__()    -> self = this
+class Suit:
+    def __init__(self, x):
+        self.x = x
+
+s = Suit(3)
+s.x     #= 3
+but Suit.x is nothing
+s.bjoggi = 12
+d = Suit(12)
+d.bjoggi    #= error
+
+class Cls:
+    def __init__(self, x):
+        self.x = x
+    def fun(self):
+        return 'My x is %x' % self.x'
+c = Cls(4)
+
+c.fun() == Cls.fun(c)
 
 
+class Cls:
+    def __init__(self, x):
+        self.x = x
+        self._y = 1337
+    def get_y(self):
+        return self._y
+    def set_y(self, val):
+        if val < 0:
+            raise ValueError('Skamm')
+        self._y = val
+    y = property(get_y, set_y)
+    def fun(self):
+        return 'My x is %x' % self.x'
+
+c = Cls(3)
+c.y = 2
+
+
+class Cls:
+    def __init__(self, x):
+        self.x = x
+        self._y = 1337
+    @property
+    def y(self):
+        return self._y
+    @y.setter
+    def set_y(self, val):
+        if val < 0:
+            raise ValueError('Skamm')
+        self._y = val
+    @y.deleter
+    def y(self):
+        pass
+    def fun(self):
+        return 'My x is %x' % self.x'
+c = Cls(3)
+c.y
+c.y = 12
+del c.y
+c.y
+del c.__dict__['_y']    # works though
+
+Also have the decorator @staticmethod ... then there is no self
+__repr__(self)  shows the c
+
+def __getattribute__(selfm name):
+    if name.startswith('__'):
+        return super(Cls, self).__getattribute__(name)
+    elif (name in self.__dict__:
+        return self.__dict__[name]
+    else:
+        self.__dict__[name] = 4
+        return self.__dict__[name]
+
+c.a         = 4
+c._x        = 12
+
+from operator import add
+class Vector:
+    def __init__(self, *args):
+        if len(args) == 2:
+            self.vec = list(args)
+        elif len(args) == 1:
+            try:
+                iter(args[0])
+                assert len(args[0]) == 2
+            except:
+                raise ValueError('Neibb')
+            self.vec = list(args[0])
+
+    def __repr__(self):
+        return 'Vector(%s)' % str(self.vec)
+
+    def __add__(self, other):
+        return list(map(add, self.vec, other.vec))
+
+    def __lt__(self, other):
+        return all(map(lambda x,y: x < y, self.vec, other.vec))
+
+    def __mul__(self, other):
+        return list(map(lambda x: x * other, self.vec))
+
+    def __rmul__(self, other):
+    return self * other
+
+    def __abs__(self):
+        return math.sqrt(sum(map(lambda x: x**2, self.vec)))
+
+    def __hash__(self):
+        return hash(tuple(self.vec))
+
+v1 = Vector(1,3)
+v2 = Vector([5,2])
+v1 + v2
+v1 * 3
+3 * v1
 
 
 
