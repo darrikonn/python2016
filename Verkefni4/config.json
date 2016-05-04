@@ -4,7 +4,10 @@
         ".jpg",
         ".torrent",
         ".jpeg",
-        ".png"
+        ".png",
+        ".txt",
+        ".dat",
+        ".db"
     ],
     "ValidSubtitleFileExtensions": [
         ".srt",
@@ -18,5 +21,8 @@
         ".pdf"
     ],
     "ValidSongFileExtensions": [
+        ".mp3"
+    ],
+    "ExcludeDirectories":[
     ]
 }
