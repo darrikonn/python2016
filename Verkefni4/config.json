@@ -9,12 +9,17 @@
         ".dat",
         ".db",
         ".url",
-        ".ignore"
+        ".URL",
+        ".ignore",
+        ".part",
+        ".sfv",
+        ".ini"
     ],
     "ValidSubtitleFileExtensions": [
         ".srt",
         ".sub",
-        ".sbv"
+        ".sbv",
+        ".idx"
     ],
     "ValidBookFileExtensions": [
         ".mobi",
@@ -29,12 +34,34 @@
         ".AVI",
         ".avi",
         ".mkv",
-        ".mp4"
+        ".mp4",
+        ".wmv",
+        ".mpg",
+        ".mov"
     ],
     "ExcludeDirectories":[
         "Movies",
         "TV-Shows",
         "Books",
-        "Songs"
+        "Songs",
+        "info_logger.log"
+    ],
+    "KnownTVShows": [
+        "30 Rock",
+        "Seinfeld",
+        "MasterChef",
+        "Klovn",
+        "Frasier",
+        "Desperate Housewives",
+        "Darren Brown",
+        "Breaking Bad",
+        "Bored To Death",
+        "Breaking the Magician's Code",
+        "Shameless",
+        "That '70s Show",
+        "Modern Family",
+        "Scrubs",
+        "Adventure Time",
+        "Its Always Sunny In Philadelphia"
     ]
 }
