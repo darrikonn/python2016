@@ -1,4 +1,4 @@
-This application sorts your downloads directory. You should run this app in a shell with two flags, i.e. -i (or --input) which is the downloads directory (full path not needed) and -c (or --config) which is a json config file that helps the sorting.
+This is a python3 application that sorts your downloads directory. You should run this app in a shell with two flags, i.e. -i (or --input) which is the downloads directory (full path not needed) and -c (or --config) which is a json config file that helps the sorting.
 e.g.:
 ./download_clean_up.py -i downloads/ -c config.json
 
@@ -16,5 +16,7 @@ No PyPI packages are needed, nor other dependencies.
 Furthermore you can run:
 ./download_clean_up.py -h
 for further information.
+
+A log is kept for all major changes, such as removing- and moving files.
 
 Good luck in keeping your downloads directory clean.

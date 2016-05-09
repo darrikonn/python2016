@@ -1,19 +1,11 @@
 #!/usr/bin/env python
 import argparse, re, os, sys, json, logging
 
-# keep a global LOG of all crucial changes
-logging.basicConfig(level=logging.INFO,
-        filename='info_logger.log',
-        filemode='a',
-        format='%(asctime)s %(message)s',
-        datefmt='%Y-%m-%d %H:%M:%S')
-LOGGER = logging.getLogger('info_logger')
-
 def move_files(filename, destination):
     try:
         if os.path.exists(filename):
             os.rename(filename, destination)
-            LOGGER.info(': File MOVED!:\n{0} -> {1}\n'.format(filename, destination))
+            logging.info(': File MOVED!:\n{0} -> {1}\n'.format(filename, destination))
     except:
         sys.stderr.write('Could not rename/move {0} to {1}'.format(filename, destination))
 
@@ -36,14 +28,14 @@ def remove_file(filename):
     try:
         if os.path.exists(filename):
             os.remove(filename)
-            LOGGER.info(': File REMOVED!:\n{0}\n'.format(filename))
+            logging.info(': File REMOVED!:\n{0}\n'.format(filename))
     except:
         sys.stderr.write('Could not remove file {0}'.format(filename))
 
 #
 # get the user configurations from the config file
 #
-def get_configurations(PATH):
+def _get_configurations(PATH):
     try:
         with open(PATH) as cf:
             items = json.loads(cf.read())
@@ -60,8 +52,8 @@ def get_configurations(PATH):
 #
 # get all known shows that the user specified in the config file
 #
-def is_a_known_show(f, keys):
-    folder = [x for x in keys if x.title() in f.title()]
+def _is_a_known_show(f, keys):
+    folder = [x for x in keys if x.title() in ' '.join(f.split('.')).strip().title()]
     if not folder:
         return []
     else:
@@ -71,18 +63,18 @@ def is_a_known_show(f, keys):
 # create title of the folder being created
 #
 def get_title(f):
-    return ' '.join(f[:f.rfind('.')].split('.')).strip().title()
+    return ' '.join(f[:f.rfind('.')].split('.')).title()
 
-def check_file_extension(f, keys):
+def _check_file_extension(f, keys):
     return any(f for x in keys if f.endswith(x))
 
-def check_file_start(f, path, keys):
+def _check_file_start(f, path, keys):
     return any(f for x in keys if f.startswith(os.path.join(path, x)))
 
 #
 # initialize the downloads directory with few root directories
 #
-def initialize(ROOT):
+def _initialize(ROOT):
     create_directories(os.path.join(ROOT, 'Movies'))
     create_directories(os.path.join(ROOT, 'Songs'))
     create_directories(os.path.join(ROOT, 'Books'))
@@ -92,25 +84,27 @@ def initialize(ROOT):
 #
 # sort the files and clean up the downloads directory
 #
-def sort_files(args):
-    TV_RE = r'(.*)(?:s|season| |\[)( ?\d+)(?: *?| ?-? ?)(?:e|episode|x)( ?\d+)'
+def _sort_files(args):
+    TV_RE = r'(.*)(?:s ?|season ?| |\[ ?)(\d+)(?:| - |-)(?: ?e ?| ?episode ?| x |x)( ?\d+)'
+    S_RE = r'[a-záðéíóúýþæö\d+]+'
     TV_CRE = re.compile(TV_RE, re.I)
-    config = get_configurations(args.config_filename)
-    initialize(args.filename)
+    S_CRE = re.compile(S_RE, re.I)
+    config = _get_configurations(args.config_filename)
+    _initialize(args.filename)
     ROOT = args.filename[args.filename.rfind('/'):]
     for root, dirs, files in os.walk(args.filename, topdown=False):
-        if check_file_start(root, args.filename, config['Exclude']):
+        if _check_file_start(root, args.filename, config['Exclude']):
             continue
         for f in files:
-            tv_show = TV_CRE.findall(' '.join(f.split('.')))
+            f_repr = ' '.join(S_CRE.findall(f)).strip()
+            tv_show = TV_CRE.findall(f_repr)
             path = os.path.join(root, f)
             old_parent_folder = re.sub(args.filename + '/', '', path)
             index = old_parent_folder.find('/')
-            if index == -1:
-                index = len(old_parent_folder)
-            old_parent_folder = old_parent_folder[:index]
-            known_show = is_a_known_show(old_parent_folder, config['KnownShows'])
-            if check_file_extension(f, config['NonValid']):
+            if not index == -1:
+                old_parent_folder = old_parent_folder[:index]
+            known_show = _is_a_known_show(old_parent_folder, config['KnownShows'])
+            if _check_file_extension(f, config['NonValid']):
                 # delete non valid files
                 remove_file(path)
             elif not known_show == []:
@@ -127,39 +121,43 @@ def sort_files(args):
             elif tv_show:
                 # check first if we can sort tv shows from a pattern of (seasons/episodes)
                 top_folder = 'TV-Shows/'
-                if check_file_extension(f, config['Songs']):
+                if _check_file_extension(f, config['Songs']):
                     top_folder = 'Songs/'
                 parent_folder = '{0}{1}{2}{3}'.format(top_folder,
-                        ' '.join(tv_show[0][0].split('.')).strip().title(),
+                        ' '.join(S_CRE.findall(tv_show[0][0])).strip().title(),
                         '/Season ' + str(int(tv_show[0][1])),
                         '/Episode ' + str(int(tv_show[0][2])))
                 # add the subtitles to a subtitle directory for the show
-                if check_file_extension(f, config['Subtitles']):
+                if _check_file_extension(f, config['Subtitles']):
                     parent_folder = '{0}/Subtitles'.format(parent_folder)
                 create_directories(os.path.join(args.filename, parent_folder))
                 move_files(path, os.path.join(args.filename, parent_folder + '/' + f))
-            elif check_file_extension(f, config['Songs']):
+            elif _check_file_extension(f, config['Songs']):
                 parent_folder = root[root.rfind(ROOT)+len(ROOT):]
                 if parent_folder == '':
-                    parent_folder = get_title(f)
+                    parent_folder = ' '.join(S_CRE.findall(get_title(f))).strip()
                 parent_folder = 'Songs/{0}'.format(parent_folder)
                 create_directories(os.path.join(args.filename, parent_folder))
                 move_files(path, os.path.join(args.filename, parent_folder + '/' + f))
-            elif check_file_extension(f, config['Subtitles']):
-                parent_folder = '{0}{1}{2}'.format('Movies/', get_title(f), '/Subtitles')
+            elif _check_file_extension(f, config['Subtitles']):
+                parent_folder = '{0}{1}{2}'.format('Movies/',
+                        ' '.join(S_CRE.findall(get_title(f))).strip(), '/Subtitles')
                 create_directories(os.path.join(args.filename, parent_folder))
                 move_files(path, os.path.join(args.filename, parent_folder + '/' + f))
-            elif check_file_extension(f, config['Books']):
-                parent_folder = '{0}{1}'.format('Books/', get_title(f))
+            elif _check_file_extension(f, config['Books']):
+                parent_folder = '{0}{1}'.format('Books/',
+                        ' '.join(S_CRE.findall(get_title(f)).strip()))
                 create_directories(os.path.join(args.filename, parent_folder))
                 move_files(path, os.path.join(args.filename, parent_folder + '/' + f))
-            elif check_file_extension(f, config['Video']):
-                parent_folder = '{0}{1}'.format('Movies/', get_title(f))
+            elif _check_file_extension(f, config['Video']):
+                parent_folder = '{0}{1}'.format('Movies/',
+                        ' '.join(S_CRE.findall(get_title(f))).strip())
                 create_directories(os.path.join(args.filename, parent_folder))
                 move_files(path, os.path.join(args.filename, parent_folder + '/' + f))
             else:
                 # if we can't find a pattern to sort, add to the Other (unsorted) directory
-                parent_folder = '{0}{1}'.format('Other (Unsorted)/', get_title(f))
+                parent_folder = '{0}{1}'.format('Other (Unsorted)/',
+                        ' '.join(S_CRE.findall(get_title(f))).strip())
                 create_directories(os.path.join(args.filename, parent_folder))
                 move_files(path, os.path.join(args.filename, parent_folder + '/' + f))
 
@@ -191,9 +189,16 @@ def main():
     args.filename = os.path.abspath(args.filename)
     args.config_filename = os.path.abspath(args.config_filename)
 
+    # keep a log of all crucial changes
+    logging.basicConfig(level=logging.INFO,
+            filename='info_logger.log',
+            filemode='a',
+            format='%(asctime)s %(message)s',
+            datefmt='%Y-%m-%d %H:%M:%S')
+
     print('Processing...')
     try:
-        sort_files(args)
+        _sort_files(args)
         move_files(os.path.dirname(os.path.realpath(__file__)) + '/info_logger.log',
                 args.filename + '/info_logger.log')
         print('Succeeded!')

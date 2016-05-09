@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-import argparse, stagger, os, sys
+import argparse, stagger, os, sys, shutil, traceback
 
 def create_directories(directory):
     try:
@@ -8,15 +8,20 @@ def create_directories(directory):
     except:
         sys.stderr.write('Could not create directory {0}\n'.format(directory))
 
-def move_files(filename, destination):
+def copy_files(src, dest):
     try:
-        if os.path.exists(filename):
-            os.rename(filename, destination)
+        if os.path.exists(src):
+            shutil.copyfile(src, dest)
     except:
-        sys.stderr.write('Could not rename/move {0} to {1}\n'.format(filename, destination))
-
+        sys.stderr.write('Could not copy {0} to {1}\n'.format(src, dest))
+#
+# return the title of the song, with track number if it exists
+#
 def _get_title(info):
-    return '{0} - {1}'.format(info.track, info.title)
+    title = info.title.replace('/', '|')
+    if info.track == 0:
+        return title
+    return '{0} - {1}'.format(info.track, title)
 
 def _structure_parent_folder(artist, album):
     try:
@@ -30,20 +35,23 @@ def _initialize(targetname, other_folder):
     create_directories(other_folder)
 
 def _copy_files(args):
-    other_folder = os.path.join(os.getcwd(), 'Other')
+    other_folder = os.path.join(args.targetname, 'Other')
     _initialize(args.targetname, other_folder)
     for root, dirs, files in os.walk(args.filename):
         for f in files:
             path = os.path.join(root, f)
             try:
                 info = stagger.read_tag(path)
-                artist = os.path.join(targetname, info.artist)
+                # copy to the other folder if the title or the artist is unknown
+                if info.artist == '' or info.title == '':
+                    raise stagger.NoTagError
+                artist = os.path.join(args.targetname, info.artist)
                 album = os.path.join(artist, info.album)
                 _structure_parent_folder(artist, album)
-                move_files(path, os.path.join(album, _get_title(info)))
-            except NoTagError:
+                copy_files(path, os.path.join(album, _get_title(info)))
+            except stagger.NoTagError:
                 # file too short
-                move_files(path, os.path.join(other_folder, f))
+                copy_files(path, os.path.join(other_folder, f))
             except:
                 sys.stderr.write('Can\'t use stagger to read tag of {0}\n'.format(path))
 
@@ -72,6 +80,7 @@ def main():
         _copy_files(args)
         print('Succeeded!')
     except:
+        traceback.print_exc()
         sys.stderr.write('Error while copying mp3 files to target folder')
 
 if __name__ == '__main__':

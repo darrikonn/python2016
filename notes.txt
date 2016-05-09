@@ -754,15 +754,165 @@ v1 + v2
 v1 * 3
 3 * v1
 
+packages need to include like this: import plib.pword
+modules need to include like this: import module
+
+if we have __init__.py inside the directory, then it is a package
+inside init can be:
+import plib.pword as pword
+then when we do import plib, we have access to pword
+from plib.pword imsport rand_pass
+
+try:
+from setuptools import setup
+except ImportError:
+    from distutils.core import setup
+
+open('README.rst') as f:
+    readme = f.read()
+setup(
+    name='plib',
+    version='0.0.1',
+    description='Password generator for humans',
+    long_description=readme,
+    url='github.com',
+    author='Darri',
+    author_email='ma@ma.is'
+    license='MIT',
+    packages=['plib'],
+    package_data={
+        'plib': ['words.txt']
+    },
+    entry_points = {
+        'console_scripts':[
+            'pword=plib.pword:main',
+            'rpass=plib.pword:rpass_main'
+        ]
+    }
+)
 
 
+Look at pandoc, change latex to html and so on.
+
+ms submit Python "Verkefni 5" 
+
+Requests:
+py -m pip install requests
+pip3 install requests
+import requests
+resp = requests.get('http://mbl.is')
+resp.url
+resp.is_redirect
+resp.headers
+resp.status_code
+resp.raise_for_status()     
+
+resp = request.get('https://myschool.ru.is/myschool')
+<Response [401]>
+
+# but mbl again
+resp.encoding
+resp.text[:100]     this returns the html of the site
+resp.content[:100]  this returns the bytes
+resp.ok
+
+def car(number):
+    return request.get('http://apis.is/car', params={'number': number})
+
+resp = car('ye944')
+a = resp.json()
+a['results']
+
+from getpass import getpass
+with open('megasecure', 'w') as f:
+    f.write(getpass())
+passw = open('megasecure').read()
+resp = requests.get('https://myschool.ru.is/myschool', auth=('darrik13', passw))
+
+for form, take the action and append to url
+checka network og params
 
 
+from getpass import getpass
+with open('megasecure', 'w') as f:
+    f.write(getpass())
+
+kt = '150193'
+payload = {'kt': kt}
+
+passw = open('megasecure').read()
+resp = requests.post('https://myschool.ru.is/myschool/?Page=Exe&ID=1.10', data=payload, 
+        auth=('darrik13', passw))
 
 
+pip install beautifulsoup4
+import bs4
+from bs4 import BeautifulSoup
+
+soup = BeatufifulSoup(resp.text, 'html.parser')
+soup        # er tha htmlid
+soup.prettify()
+soup.find_all('a')
+soup.find('title')
+soup.title
+soup.a
+soup('a')
+soup('center')[1].table.tbody
+soup('center')[1].table.tbody('tr')[1]
+soup('center')[1].table.tbody('tr')[1].td.text
+soup('center')[1].table.tbody('tr')[1].td.string
+results = []
+for line in soup('center')[1].table.tbody('tr')[1:-1]:
+    res = list(map(lambda x: x.text, line('td')))
+    results.append(tuple(res[:2]))  er tha kennitala og nafn
 
 
+soup.find(re.compile('^t.*e$'))
+soup.find(string=re.compile('Hjalti'))
+find default leitar af togum
+tag = soup.find(*{'class':'ruTableTitle'})
+tag = soup.find(class_='ruTableTitle')
 
+
+s = request.Session()
+s.post('https://deildu.net/takelogin.php', data={'username': 'user', 'password': 'pass'})
+
+torrent = s.get('https://deildu.net/browse.php')
+torrent.text
+
+templates (html) are in templates folder
+static (css) are in static folder
+
+from flask import Flask
+app = Flask(__name__)
+
+@app.route('/')
+def hello():
+    return render_template('index.html')
+
+@app.route('/<name>')
+def hello(name):
+    return render_template('index.html', name=name)
+
+@app.route('/esp/<name>')
+def hola(name):
+    return 'Hola Mundo! %s', % name
+
+@app.route('/num/<int:n>')
+def hello(n):
+    return str(n+1)
+
+if __name__ == '__main__':
+    app.run()
+
+
+in html:
+jinja2:
+{% if name %}
+<h1>Hello {{name}}!</h1>
+{% else %}
+<h1>blatwo</h1>
+{% endif %}
 
 
 
