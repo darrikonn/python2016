@@ -914,6 +914,44 @@ jinja2:
 <h1>blatwo</h1>
 {% endif %}
 
+import traceback
+traceback.print_exc()
+return traceback.format_exc()
+
+from threading import Thread
+import time
+
+def fun(name):
+    time.sleep(5)
+    print('yo yo, zup %s' % name)
+
+t = Thread(target=fun, args=('dude',), daemon=False)   # False tha bydur hann eftir ad allir thraedir joini og haettir tha
+t.start()
+
+
+import tkinter as tk
+class Application(tk.Frame):
+    def __init__(self, master=None):
+        tk.Frame.__init__(self, master)
+        self.pack()
+        self.createWidgets()
+
+    def createWidgets(self):
+        self.hi_there = tk.Button(slef)
+        ['text']...['command']=self.say_hi...pack(side='top')
+        self.hi_there.grid(row=0, column=0, sticky=tk.W+tk.E+tk.B)
+        self.QUIT = tk.Button(slef, text='QUIT', fg='red', command=root.destroy)
+        self.QUIT.pack(side='bottom')
+
+    def say_hit(self):
+        print('hi there, everyone!')
+
+root = tk.Tk()
+app = Application(master=root)
+app.mainloop()
+
+pip install django
+django-admin.py startproject myproject
 
 
 
