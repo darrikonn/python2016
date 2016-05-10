@@ -1,3 +1,3 @@
 beautifulsoup
 requests
-lxml
+prettytable

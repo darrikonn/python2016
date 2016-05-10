@@ -64,4 +64,4 @@ target/
 # Skip the downloads directory from Verkefni 4
 Verkefni4/downloads
 Verkefni3/nofn.json
-Verkefni5/.password.txt
+Verkefni5/MySchool_cmd/.password.txt
