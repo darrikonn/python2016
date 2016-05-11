@@ -23,6 +23,12 @@ class Grades:
     Summary = 3
     Abstract = 4
 
+#
+# custom exception
+#
+class NoCourseOrAssignment(Exception):
+    pass
+
 class Password:
     def __init__(self):
         if not self._contains_password():
@@ -94,6 +100,7 @@ class MySchool:
             link = 'https://myschool.ru.is/myschool/?Page=LMS&ID=16&fagID={0}&View=52&ViewMode=2&Tab=&Act=11&verkID={1}'.format(ids[0][1],
                     ids[0][0])
             resp = requests.post(link, data=data, auth=(USERNAME, self._pwd))
+            print('Assignment handed in!')
         except NoCourseOrAssignment:
             sys.stderr.write('No course or assignment with that name!\n')
         except:
@@ -217,6 +224,10 @@ def main():
 
     args = parser.parse_args()
 
+    if (args.filename or args.message) and args.submit_assignment == None:
+        sys.stderr.write('Cannot supply "-m/--message" and "-f/--file" without "-sa/--submit_assignment"\n')
+        return
+
     pwd = Password()
     ms = MySchool(pwd.get_password())
 
@@ -239,7 +250,6 @@ def main():
         else:
             ms.submit_assignment(args.submit_assignment[0], args.submit_assignment[1],
                     args.filename, args.message)
-            print('Assignment handed in!')
     elif not args.grades == None:
         if hasattr(Grades, args.grades[0].title()):
             print_table(ms.get_grades(args.grades[0]))
