@@ -1,4 +1,4 @@
-###timetable (--timetable)
+####timetable (--timetable)
 sudo ./myschool_cmd.py -tt                      
 sudo ./myschool_cmd.py -a <filter>              next assignments, can filter (not needed) e.g. .. -a Python (--assignments)
 sudo ./myschool_cmd.py -et                      examtable (--examtable)
