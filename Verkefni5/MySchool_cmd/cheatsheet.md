@@ -1,5 +1,6 @@
-####timetable (--timetable)
-sudo ./myschool_cmd.py -tt                      
+# Cheatsheet for a MySchool command line
+1. list timetable with -tt or --timetable
+> sudo ./myschool_cmd.py -tt                      
 sudo ./myschool_cmd.py -a <filter>              next assignments, can filter (not needed) e.g. .. -a Python (--assignments)
 sudo ./myschool_cmd.py -et                      examtable (--examtable)
 sudo ./myschool_cmd.py -nm                      new material (--new_material)
