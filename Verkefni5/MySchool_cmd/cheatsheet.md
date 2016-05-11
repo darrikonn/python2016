@@ -1,5 +1,5 @@
 # Cheatsheet for a MySchool command line
-1. list timetable with -tt or --timetable
+1. Get **timetable** with -tt or --timetable
 
 > sudo ./myschool_cmd.py -tt      
 
