@@ -83,7 +83,7 @@ class MySchool:
         return self._get_table('https://myschool.ru.is/myschool/?Page=Exe&ID=3.2', 0, 1)
 
     def submit_assignment(self, course, assignment, f, comment):
-        data = {'athugasemdnemanda': comment}
+        data = {'athugasemdnemanda': comment, 'FILE': f}
         try:
             T = r'(?:verkID=)(\d+)(?:.*)(?:fagid=)(\d+)'
             TC = re.compile(T)
@@ -168,6 +168,15 @@ def print_table(table):
     for t in table:
         print(t)
 
+#
+# need to validate input files from the user
+#
+def validate_file(parser, filepath):
+    if os.path.exists(filepath):
+        return filepath
+    else:
+        return parser.error('The file/directory "{0}" does not exist!'.format(filepath))
+
 def main():
     # user has to have sudo privileges because of sensitive password information
     if not os.geteuid() == 0:
@@ -200,6 +209,11 @@ def main():
             help='This command will list all your grades')
     parser.add_argument('-sa', '--submit_assignment', dest='submit_assignment', nargs='*',
             help='This command will submit your assignment')
+    parser.add_argument('-m', '--message', dest='message', metavar='STRING',
+            help='A message from the student to the teacher. Follows when submitting assignment')
+    parser.add_argument('-f', '--file', dest='filename', metavar='FILE',
+            help='The file that is about to be submitted to MySchool',
+            type=lambda f: validate_file(parser, f))
 
     args = parser.parse_args()
 
@@ -220,15 +234,12 @@ def main():
     elif args.quizzes:
         print_table(ms.get_online_quizzes())
     elif not args.submit_assignment == None:
-        try: # need to fix, start with both comment and file
-            if not len(args.submit_assignment) == 4:
-                sys.stderr('Arguments not fulfilled, size needs to be of length 4!\n')
-                return
+        if not len(args.submit_assignment) == 2:
+            sys.stderr.write('Need to specify course and assignment name!\n')
+        else:
             ms.submit_assignment(args.submit_assignment[0], args.submit_assignment[1],
-                    args.submit_assignment[2], args.submit_assignment[3])
-            print('Success!')
-        except:
-            sys.stderr('Could not submit the assignment')
+                    args.filename, args.message)
+            print('Assignment handed in!')
     elif not args.grades == None:
         if hasattr(Grades, args.grades[0].title()):
             print_table(ms.get_grades(args.grades[0]))
