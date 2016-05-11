@@ -1,4 +1,4 @@
-# Cheatsheet for a MySchool command line
+# Cheatsheet for **myschool_cmd.py**
 Get **timetable** with *-tt* or *--timetable*.
 
 > sudo ./myschool_cmd.py -tt      
