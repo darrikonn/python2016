@@ -34,30 +34,31 @@ class NoCourseOrAssignment(Exception):
 #
 class Password:
     def __init__(self):
+        self._path = os.path.join(os.path.expanduser('~'), PASSWORD_FILE_NAME)
         if not self._contains_password():
             self._set_password()
 
     def get_password(self):
         try:
-            with open(PASSWORD_FILE_NAME, 'r') as pwd:
+            with open(self._path, 'r') as pwd:
                 self._password = pwd.read()
             return self._password
         except:
             traceback.print_exc()
-            sys.stderr.write('Could not get the password from {0}\n'.format(PASSWORD_FILE_NAME))
+            sys.stderr.write('Could not get the password from {0}\n'.format(self._path))
 
     def _set_password(self):
         try:
-            with open(PASSWORD_FILE_NAME, 'w') as pwd:
+            with open(self._path, 'w') as pwd:
                 pwd.write(getpass.getpass())
-            os.chown(PASSWORD_FILE_NAME, 0, -1)
-            os.chmod(PASSWORD_FILE_NAME, 600)
+            os.chown(self._path, 0, -1)
+            os.chmod(self._path, 600)
         except:
             traceback.print_exc()
-            sys.stderr.write('Could not set the password to {0}\n'.format(PASSWORD_FILE_NAME))
+            sys.stderr.write('Could not set the password to {0}\n'.format(self._path))
 
     def _contains_password(self):
-        return os.path.isfile(os.path.abspath(PASSWORD_FILE_NAME)) and not os.stat(PASSWORD_FILE_NAME).st_size == 0
+        return os.path.isfile(os.path.abspath(self._path)) and not os.stat(self._path).st_size == 0
 
 class MySchool:
     def __init__(self, pwd):

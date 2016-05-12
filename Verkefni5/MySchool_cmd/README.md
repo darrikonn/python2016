@@ -5,7 +5,7 @@ This is a Python3 MySchool command line application.<br />
 
 ## Setup
 In order to run this script, you should open *myschool_cmd.py* and change the global **USERNAME** in *line 8* to your own username..<br />
-You need to run the script with sudo privilege, where in your first run you will be prompt for a password from MySchool. This password will be saved to *.password.txt* and only root will be able to both read and write. 
+You need to run the script with sudo privilege, where in your first run you will be prompt for a password from MySchool. This password will be saved to *.password.txt*, located in your *$HOME* directory, and only root will be able to both read and write. 
 
 ## Run
 After the setup, you can run the commands that are listed in the *cheatsheet*, e.g.:
