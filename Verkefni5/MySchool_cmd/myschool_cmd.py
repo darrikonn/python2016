@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 import argparse, requests, getpass, os, sys, traceback, prettytable, re
 from bs4 import BeautifulSoup
-# tabulate
 
 #
 # public variables
@@ -29,6 +28,10 @@ class Grades:
 class NoCourseOrAssignment(Exception):
     pass
 
+#
+# read the password from a read/write sudo protected file. If the file does not exist
+# then create it with the before mentioned protection.
+#
 class Password:
     def __init__(self):
         if not self._contains_password():
@@ -59,15 +62,26 @@ class Password:
 class MySchool:
     def __init__(self, pwd):
         self._pwd = pwd
+        self._sub = re.compile(r'<[^>]*>')
 
     def _get_table(self, link, c_index, t_index):
         try:
-            resp = requests.get(link,
-                    auth=(USERNAME, self._pwd))
+            resp = requests.get(link, auth=(USERNAME, self._pwd))
             soup = BeautifulSoup(resp.text, 'html.parser')
             tr_soup = soup('center')[c_index].table.tbody('tr')[t_index:-1]
-            table = '<table><tbody>{0}</tbody></table>'.format(get_string_format(tr_soup))
-            return prettytable.from_html(table)
+            table = '<table><thead>'
+            for i, tr in enumerate(tr_soup):
+                if i == 0:
+                    table = '{0}{1}</thead><tbody>'.format(table, tr)
+                else:
+                    td_temp = ''
+                    for td in tr.find_all('td'):
+                        if not td.a == None:
+                            td_temp = '{0}<td>{1}</td>'.format(td_temp, td.a.get_text())
+                        else:
+                            td_temp = '{0}{1}'.format(td_temp, td)
+                    table = '{0}<tr>{1}</tr>'.format(table, td_temp)
+            return prettytable.from_html('{0}</tbody></table>'.format(table))
         except:
             traceback.print_exc()
             sys.stderr.write('Could not get table\n')
@@ -85,11 +99,38 @@ class MySchool:
                 break
         return href
 
+    def _strip_html_markup(self, s):
+        return self._sub.sub('', s)
+
     def get_timetable(self):
-        return self._get_table('https://myschool.ru.is/myschool/?Page=Exe&ID=3.2', 0, 1)
+        resp = requests.get('https://myschool.ru.is/myschool/?Page=Exe&ID=3.2',
+                auth=(USERNAME, self._pwd))
+        soup = BeautifulSoup(resp.text, 'html.parser')
+        tr_soup = soup('center')[0].table.tbody('tr')[1:-1]
+        table = '<table><thead>'
+        for i, tr in enumerate(tr_soup):
+            if i == 0:
+                continue
+            elif i == 1:
+                table = '{0}{1}</thead><tbody>'.format(table, tr)
+            else:
+                td_temp = ''
+                for td in tr.find_all('td'):
+                    if not td.span == None:
+                        td_temp = '{0}<td>{1}</td>'.format(td_temp,
+                                self._strip_html_markup(str(td.span.a.small).replace('<br>', '\n')))
+                    else:
+                        td_temp = '{0}{1}'.format(td_temp, td)
+                table = '{0}<tr>{1}</tr>'.format(table, td_temp)
+        return prettytable.from_html('{0}</tbody></table>'.format(table))
+        #return self._get_table('https://myschool.ru.is/myschool/?Page=Exe&ID=3.2', 0, 1)
 
     def submit_assignment(self, course, assignment, f, comment):
-        data = {'athugasemdnemanda': comment, 'FILE': f}
+        data = {'athugasemdnemanda': comment}
+        if f == None:
+            files = {'FILE': (',')}
+        else:
+            files = {f: f}
         try:
             T = r'(?:verkID=)(\d+)(?:.*)(?:fagid=)(\d+)'
             TC = re.compile(T)
@@ -99,7 +140,7 @@ class MySchool:
             ids = TC.findall(href)
             link = 'https://myschool.ru.is/myschool/?Page=LMS&ID=16&fagID={0}&View=52&ViewMode=2&Tab=&Act=11&verkID={1}'.format(ids[0][1],
                     ids[0][0])
-            resp = requests.post(link, data=data, auth=(USERNAME, self._pwd))
+            resp = requests.post(link, data=data, files=files, auth=(USERNAME, self._pwd))
             print('Assignment handed in!')
         except NoCourseOrAssignment:
             sys.stderr.write('No course or assignment with that name!\n')
@@ -138,7 +179,7 @@ class MySchool:
 
     def get_groups(self, year, season):
         return self._get_table('https://myschool.ru.is/myschool/?Page=Exe&ID=1.11&Tab=2&Sem={0}{1}'.format(year,
-                    getattr(Season, season.title())), 1, 0)
+                getattr(Season, season.title())), 1, 0)
 
     def get_username(self):
         resp = requests.get('https://myschool.ru.is/myschool/?Page=Front',
@@ -160,13 +201,20 @@ class MySchool:
                     if i == 0:
                         thead = '{0}{1}'.format(thead, tr)
                     else:
-                        tbody = '{0}<tr>{1}</tr>'.format(tbody,
-                                get_string_format(tr.find_all('td')[1:-1]))
+                        td_temp = ''
+                        for td in tr.find_all('td')[1:-1]:
+                            if not td.div == None:
+                                td_temp = '{0}<td>{1}</td>'.format(td_temp, td.div.get_text())
+                            elif not td.p == None:
+                                td_temp = '{0}<td>{1}</td>'.format(td_temp, td.p.get_text())
+                            else:
+                                td_temp = '{0}{1}'.format(td_temp, td)
+                        tbody = '{0}<tr>{1}</tr>'.format(tbody, td_temp)
                 table = '{0}<table>{1}</thead>{2}</tbody></table>'.format(table, thead, tbody)
             return prettytable.from_html(table)
         except:
             traceback.print_exc()
-            sys.stderr.write('Could not get new material\n')
+            sys.stderr.write('Could not get book list\n')
 
 def get_string_format(s):
     return ''.join(str(x) for x in s)
@@ -224,6 +272,7 @@ def main():
 
     args = parser.parse_args()
 
+    # can only supply message and file if you're submitting an assignment
     if (args.filename or args.message) and args.submit_assignment == None:
         sys.stderr.write('Cannot supply "-m/--message" and "-f/--file" without "-sa/--submit_assignment"\n')
         return
