@@ -14,16 +14,16 @@ After the setup, you can run the commands that are listed in the *cheatsheet*, e
 
 This command will list your timetable.<br />
 
-## Recommended options, not mandatory
-I recommend first creating a symbolic link from *myschool_cmd.py* to */bin*, with:
+## Recommended options (not mandatory)
+I recommend first either moving the file or creating a symbolic link from *myschool_cmd.py* to */bin*, with:
 
-> ln -s /full/path/to/myschool_cmd.py /bin/myschool_cmd.
+> sudo ln -s /full/path/to/myschool_cmd.py /bin/myschool_cmd.
 
 After that create an alias so it will be easier to run the script.
 ##### For bash users:
 Open ~/.bashrc and append this to the end of the file:
 
-> alias ms="sudo ./myschool_cmd.py"
+> alias ms="sudo myschool_cmd.py"
 
 ##### For zsh users:
 Open ~/.zshrc and append this to the end of the file:

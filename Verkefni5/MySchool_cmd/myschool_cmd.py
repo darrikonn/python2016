@@ -144,9 +144,9 @@ class MySchool:
     def submit_assignment(self, course, assignment, f, comment):
         data = {'athugasemdnemanda': comment}
         if f == None:
-            files = {'FILE': (',')}
+            files = {'FILE': ('','')}
         else:
-            files = {f: f}
+            files = {'FILE': (f,f)}
         try:
             T = r'(?:verkID=)(\d+)(?:.*)(?:fagid=)(\d+)'
             TC = re.compile(T)
@@ -173,7 +173,13 @@ class MySchool:
             table = '<table><thead>{0}</thead><tbody>'.format(tr_soup[0])
             for i in range(1, len(tr_soup)):
                 if filt.lower() in tr_soup[i].get_text().lower():
-                    table = '{0}{1}'.format(table, tr_soup[i])
+                    td_temp = ''
+                    for td in tr_soup[i].find_all('td'):
+                        if not td.a == None:
+                            td_temp = '{0}<td>{1}</td>'.format(td_temp, td.a.get_text())
+                        else:
+                            td_temp = '{0}{1}'.format(td_temp, td)
+                    table = '{0}<tr>{1}</tr>'.format(table, td_temp)
             table = '{0}</tbody></table>'.format(table)
             return prettytable.from_html(table)
         except:
