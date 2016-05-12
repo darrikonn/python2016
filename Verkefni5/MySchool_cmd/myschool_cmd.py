@@ -76,7 +76,13 @@ class MySchool:
             table = '<table><thead>'
             for i, tr in enumerate(tr_soup):
                 if i == 0:
-                    table = '{0}{1}</thead><tbody>'.format(table, tr)
+                    th_temp = ''
+                    for th in tr.find_all('th'):
+                        if not th.a == None:
+                            th_temp = '{0}<th>{1}</th>'.format(th_temp, th.a.get_text())
+                        else:
+                            th_temp = '{0}{1}'.format(th_temp, th)
+                    table = '{0}<tr>{1}</tr></thead><tbody>'.format(table, th_temp)
                 else:
                     td_temp = ''
                     for td in tr.find_all('td'):

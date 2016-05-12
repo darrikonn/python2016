@@ -25,7 +25,7 @@ I recommend first either moving the file or creating a symbolic link from *mysch
 
 After that create an alias so it will be easier to run the script.
 ##### For bash users:
-Open ~/.bashrc and append this to the end of the file:
+Open ~/.bashrc (or ~/.bash_profile if you are using Mac OS X) and append this to the end of the file:
 
 > alias ms="sudo myschool_cmd.py"
 
