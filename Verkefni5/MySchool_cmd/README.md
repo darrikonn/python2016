@@ -1,3 +1,0 @@
-beautifulsoup
-requests
-prettytable

@@ -64,6 +64,9 @@ class MySchool:
         self._pwd = pwd
         self._sub = re.compile(r'<[^>]*>')
 
+    #
+    # returns a prettified table, without all inner tags
+    #
     def _get_table(self, link, c_index, t_index):
         try:
             resp = requests.get(link, auth=(USERNAME, self._pwd))
@@ -86,44 +89,57 @@ class MySchool:
             traceback.print_exc()
             sys.stderr.write('Could not get table\n')
 
+    #
+    # find the ID of the course and the assignment in order to submit an assignment
+    #
     def _get_assignment_course_ID(self, course, assignment):
-        resp = requests.get('https://myschool.ru.is/myschool/?Page=Exe&ID=1.12',
-            auth=(USERNAME, self._pwd))
-        soup = BeautifulSoup(resp.text, 'html.parser')
-        tr_soup = soup('center')[0].table.tbody('tr')[1:-1]
-        href = ''
-        for tr in tr_soup:
-            s = tr.get_text().lower()
-            if course.lower() in s and assignment.lower() in s:
-                href = tr('td')[4].a['href']
-                break
-        return href
+        try:
+            resp = requests.get('https://myschool.ru.is/myschool/?Page=Exe&ID=1.12',
+                auth=(USERNAME, self._pwd))
+            soup = BeautifulSoup(resp.text, 'html.parser')
+            tr_soup = soup('center')[0].table.tbody('tr')[1:-1]
+            href = ''
+            for tr in tr_soup:
+                s = tr.get_text().lower()
+                if course.lower() in s and assignment.lower() in s:
+                    href = tr('td')[4].a['href']
+                    break
+            return href
+        except:
+            traceback.print_exc()
+            sys.stderr.write('Could not get the ID of the assignment and its course\n')
 
+    #
+    # the strip club!
+    #
     def _strip_html_markup(self, s):
         return self._sub.sub('', s)
 
     def get_timetable(self):
-        resp = requests.get('https://myschool.ru.is/myschool/?Page=Exe&ID=3.2',
-                auth=(USERNAME, self._pwd))
-        soup = BeautifulSoup(resp.text, 'html.parser')
-        tr_soup = soup('center')[0].table.tbody('tr')[1:-1]
-        table = '<table><thead>'
-        for i, tr in enumerate(tr_soup):
-            if i == 0:
-                continue
-            elif i == 1:
-                table = '{0}{1}</thead><tbody>'.format(table, tr)
-            else:
-                td_temp = ''
-                for td in tr.find_all('td'):
-                    if not td.span == None:
-                        td_temp = '{0}<td>{1}</td>'.format(td_temp,
-                                self._strip_html_markup(str(td.span.a.small).replace('<br>', '\n')))
-                    else:
-                        td_temp = '{0}{1}'.format(td_temp, td)
-                table = '{0}<tr>{1}</tr>'.format(table, td_temp)
-        return prettytable.from_html('{0}</tbody></table>'.format(table))
-        #return self._get_table('https://myschool.ru.is/myschool/?Page=Exe&ID=3.2', 0, 1)
+        try:
+            resp = requests.get('https://myschool.ru.is/myschool/?Page=Exe&ID=3.2',
+                    auth=(USERNAME, self._pwd))
+            soup = BeautifulSoup(resp.text, 'html.parser')
+            tr_soup = soup('center')[0].table.tbody('tr')[1:-1]
+            table = '<table><thead>'
+            for i, tr in enumerate(tr_soup):
+                if i == 0:
+                    continue
+                elif i == 1:
+                    table = '{0}{1}</thead><tbody>'.format(table, tr)
+                else:
+                    td_temp = ''
+                    for td in tr.find_all('td'):
+                        if not td.span == None:
+                            td_temp = '{0}<td>{1}</td>'.format(td_temp,
+                                    self._strip_html_markup(str(td.span.a.small).replace('<br>', '\n')))
+                        else:
+                            td_temp = '{0}{1}'.format(td_temp, td)
+                    table = '{0}<tr>{1}</tr>'.format(table, td_temp)
+            return prettytable.from_html('{0}</tbody></table>'.format(table))
+        except:
+            traceback.print_exc()
+            sys.stderr.write('Could not get timetable\n')
 
     def submit_assignment(self, course, assignment, f, comment):
         data = {'athugasemdnemanda': comment}
@@ -146,19 +162,23 @@ class MySchool:
             sys.stderr.write('No course or assignment with that name!\n')
         except:
             traceback.print_exc()
-            sys.stderr.write('Could not submit the assignment')
+            sys.stderr.write('Could not submit the assignment\n')
 
     def get_assignments(self, filt):
-        resp = requests.get('https://myschool.ru.is/myschool/?Page=Exe&ID=1.12',
-            auth=(USERNAME, self._pwd))
-        soup = BeautifulSoup(resp.text, 'html.parser')
-        tr_soup = soup('center')[0].table.tbody('tr')[:-1]
-        table = '<table><thead>{0}</thead><tbody>'.format(tr_soup[0])
-        for i in range(1, len(tr_soup)):
-            if filt.lower() in tr_soup[i].get_text().lower():
-                table = '{0}{1}'.format(table, tr_soup[i])
-        table = '{0}</tbody></table>'.format(table)
-        return prettytable.from_html(table)
+        try:
+            resp = requests.get('https://myschool.ru.is/myschool/?Page=Exe&ID=1.12',
+                auth=(USERNAME, self._pwd))
+            soup = BeautifulSoup(resp.text, 'html.parser')
+            tr_soup = soup('center')[0].table.tbody('tr')[:-1]
+            table = '<table><thead>{0}</thead><tbody>'.format(tr_soup[0])
+            for i in range(1, len(tr_soup)):
+                if filt.lower() in tr_soup[i].get_text().lower():
+                    table = '{0}{1}'.format(table, tr_soup[i])
+            table = '{0}</tbody></table>'.format(table)
+            return prettytable.from_html(table)
+        except:
+            traceback.print_exc()
+            sys.stderr.write('Could not get assignments\n')
 
     def get_courses(self, year, season):
         return self._get_table('https://myschool.ru.is/myschool/?Page=Exe&ID=7&Tab=1&Sem={0}{1}'.format(year,
@@ -181,11 +201,18 @@ class MySchool:
         return self._get_table('https://myschool.ru.is/myschool/?Page=Exe&ID=1.11&Tab=2&Sem={0}{1}'.format(year,
                 getattr(Season, season.title())), 1, 0)
 
+    #
+    # this is the default behavior if no command is specified
+    #
     def get_username(self):
-        resp = requests.get('https://myschool.ru.is/myschool/?Page=Front',
-                auth=(USERNAME, self._pwd))
-        soup = BeautifulSoup(resp.text, 'html.parser')
-        return soup.div.table('tr')[3].td.div.span.get_text()
+        try:
+            resp = requests.get('https://myschool.ru.is/myschool/?Page=Front',
+                    auth=(USERNAME, self._pwd))
+            soup = BeautifulSoup(resp.text, 'html.parser')
+            return soup.div.table('tr')[3].td.div.span.get_text()
+        except:
+            traceback.print_exc()
+            sys.stderr.write('Could not get the username\n')
 
     def get_book_list(self):
         try:
@@ -215,9 +242,6 @@ class MySchool:
         except:
             traceback.print_exc()
             sys.stderr.write('Could not get book list\n')
-
-def get_string_format(s):
-    return ''.join(str(x) for x in s)
 
 def print_table(table):
     for t in table:
