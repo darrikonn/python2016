@@ -143,12 +143,8 @@ class MySchool:
             sys.stderr.write('Could not get timetable\n')
 
     def submit_assignment(self, course, assignment, f, comment):
-        data = {'athugasemdnemanda': comment}
-        if f == None:
-            files = {'FILE': ('','')}
-        else:
-            files = {'FILE': (f,f)}
         try:
+            data = {'athugasemdnemanda': comment}
             T = r'(?:verkID=)(\d+)(?:.*)(?:fagid=)(\d+)'
             TC = re.compile(T)
             href = self._get_assignment_course_ID(course, assignment)
@@ -157,7 +153,13 @@ class MySchool:
             ids = TC.findall(href)
             link = 'https://myschool.ru.is/myschool/?Page=LMS&ID=16&fagID={0}&View=52&ViewMode=2&Tab=&Act=11&verkID={1}'.format(ids[0][1],
                     ids[0][0])
-            resp = requests.post(link, data=data, files=files, auth=(USERNAME, self._pwd))
+            if f == None:
+                files = {'FILE': ('', '')}
+                resp = requests.post(link, data=data, files=files, auth=(USERNAME, self._pwd))
+            else:
+                with open(os.path.abspath(f), 'rb') as F:
+                    files = {'FILE': (os.path.basename(f), F)}
+                    resp = requests.post(link, data=data, files=files, auth=(USERNAME, self._pwd))
             print('Assignment handed in!')
         except NoCourseOrAssignment:
             sys.stderr.write('No course or assignment with that name!\n')
