@@ -6,5 +6,5 @@ To run the application do the following:
 
 > ./copy_mp3.py -i ipod_directory -o target_output_file
 
-* The -i (or --input) is the source of the ipod directory
-* * The -o (or --ouput) is the desired non existing output file, where the songs are copied over.
+* **-i** (or **--input**) is the source of the ipod directory
+* **-o** (or **--ouput**) is the desired non existing output file, where the songs are copied over.
