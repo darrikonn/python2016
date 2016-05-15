@@ -46,6 +46,6 @@ Get **all grades** with *-g* or *--grades*. You'll need to specify one of the fo
 
 > sudo ./myschool_cmd.py -g all
 
-**Handin/Submit an assignments** with *-sa* or *--submit_assignment*. You have to specify what course this assignment belongs to and finally the name of the assignment. You can give the file with *-f* or *--file* and leave a comment with the assignment with *-m* or *--message*.
+**Handin/Submit an assignments** with *-sa* or *--submit_assignment*. You have to specify what course this assignment belongs to and finally the name of the assignment. You can give the file with *-f* or *--file* and leave a comment with the assignment with *-m* or *--message*. You can submit multiple files, and it also checks for validation regarding file count limitations and valid extensions. I decided to not allow users to add group members from the command line, as I think the command line would not be a good choice to pick students out of 100+ possibilities. Just hand in the assignment and afterwards you can specify your group members on MySchool.
 
 > sudo ./myschool_cmd.py -sa Python "Verkefni 5" -f myschool_cmd.zip -m "This course is granadaaaa!"

@@ -23,9 +23,15 @@ class Grades:
     Abstract = 4
 
 #
-# custom exception
+# custom exceptions
 #
 class NoCourseOrAssignment(Exception):
+    pass
+
+class FileCountExceeded(Exception):
+    pass
+
+class InvalidFileExtension(Exception):
     pass
 
 #
@@ -50,6 +56,7 @@ class Password:
     def _set_password(self):
         try:
             with open(self._path, 'w') as pwd:
+                print('Please enter your Reykjavik University password')
                 pwd.write(getpass.getpass())
             os.chown(self._path, 0, -1)
             os.chmod(self._path, 600)
@@ -122,6 +129,14 @@ class MySchool:
     def _strip_html_markup(self, s):
         return self._sub.sub('', s)
 
+    def _get_restrictions(self, link):
+        resp = requests.get(link, auth=(USERNAME, self._pwd))
+        soup = BeautifulSoup(resp.text, 'html.parser')
+        tr_soup = soup('center')[0].table('tr')
+        valid_file = tr_soup[5]('td')[2].get_text().strip()
+        file_count = tr_soup[6]('td')[2].get_text().strip()
+        return (valid_file, file_count)
+
     def get_timetable(self):
         try:
             resp = requests.get('https://myschool.ru.is/myschool/?Page=Exe&ID=3.2',
@@ -163,12 +178,32 @@ class MySchool:
                 files = {'FILE': ('', '')}
                 resp = requests.post(link, data=data, files=files, auth=(USERNAME, self._pwd))
             else:
-                with open(os.path.abspath(f), 'rb') as F:
-                    files = {'FILE': (os.path.basename(f), F)}
-                    resp = requests.post(link, data=data, files=files, auth=(USERNAME, self._pwd))
+                restrictions = self._get_restrictions(link)
+                # check for restrictions
+                if not restrictions[0] == '':
+                    if not all(x[x.find('.'):] in restrictions[0] for x in f):
+                        raise InvalidFileExtension(restrictions[0])
+                if restrictions[1].isdigit():
+                    cnt = int(restrictions[1])
+                    if len(f) > cnt:
+                        raise FileCountExceeded(cnt)
+                files = []
+                opened_files = []
+                for F in f:
+                    cur_f = open(os.path.abspath(F), 'rb')
+                    opened_files.append(cur_f)
+                    files.append((os.path.basename(F), cur_f))
+                requests.post(link, data=data, files=files, auth=(USERNAME, self._pwd))
+                # need to close the files afterwards
+                for F in opened_files:
+                    F.close()
             print('Assignment handed in!')
         except NoCourseOrAssignment:
             sys.stderr.write('No course or assignment with that name!\n')
+        except FileCountExceeded as cnt:
+            sys.stderr.write('File count exceeded. Maximum file count is {0}!\n'.format(cnt))
+        except InvalidFileExtension as ex:
+            sys.stderr.write('File extensions invalid. Valid file extensions are {0}\n'.format(ex))
         except:
             traceback.print_exc()
             sys.stderr.write('Could not submit the assignment\n')
@@ -307,7 +342,7 @@ def main():
             help='A message from the student to the teacher. Follows when submitting assignment')
     parser.add_argument('-f', '--file', dest='filename', metavar='FILE',
             help='The file that is about to be submitted to MySchool',
-            type=lambda f: validate_file(parser, f))
+            type=lambda f: validate_file(parser, f), nargs='+')
 
     args = parser.parse_args()
 
