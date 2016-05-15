@@ -132,7 +132,7 @@ class MySchool:
     def _get_restrictions(self, link):
         resp = requests.get(link, auth=(USERNAME, self._pwd))
         soup = BeautifulSoup(resp.text, 'html.parser')
-        tr_soup = soup('center')[0].table('tr')
+        tr_soup = soup('center')[0].table('tr', recursive=False)
         valid_file = tr_soup[5]('td')[2].get_text().strip()
         file_count = tr_soup[6]('td')[2].get_text().strip()
         return (valid_file, file_count)
