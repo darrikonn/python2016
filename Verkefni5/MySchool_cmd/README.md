@@ -8,7 +8,7 @@ Install the requirements with:
 
 > sudo pip install -r requirements.txt
 
-Next open *myschool_cmd.py* and change the global **USERNAME** in *line 24* to your own username..<br />
+Next open *myschool_cmd.py* and change the global **USERNAME** in *line 24* to your own username.<br />
 You need to run the script with sudo privilege, where in your first run you will be prompt for a password from MySchool. This password will be saved to *.password.txt*, located in your */root* directory, and only root will be able to both read and write. <br/>
 Optionally you can change all three global variables, inside the script:
 * USERNAME
