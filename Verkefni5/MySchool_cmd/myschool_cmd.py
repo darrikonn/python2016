@@ -1,12 +1,29 @@
 #!/usr/bin/env python
+'''
+An API and a command line interface for MySchool.
+Commands can be seen in the cheatsheet on my GitHub.
+In version 0.0.*, this script only runs on UNIX systems.
+'''
+##########################################################
+__author__ = 'Darri Steinn Konradsson'
+__copyright__ = 'Copyright 2016, https://github.com/darrikonn'
+__credits__ = ['Darri Steinn Konradsson']
+__license__ = 'GPL'
+__version__ = '0.0.1'
+__maintainer__ = 'Darri Steinn Konradsson'
+__email__ = 'darrik13@ru.is'
+##########################################################
+
 import argparse, requests, getpass, os, sys, traceback, prettytable, re
 from bs4 import BeautifulSoup
+
 
 #
 # public variables
 #
 USERNAME = 'darrik13'
 PASSWORD_FILE_NAME = '.password.txt'
+USE_DAY_OF_THE_WEEK = True          # used for timetable command
 
 #
 # public enum classes
@@ -145,10 +162,11 @@ class MySchool:
             tr_soup = soup('center')[0].table.tbody('tr')[1:-1]
             table = '<table><thead>'
             for i, tr in enumerate(tr_soup):
-                if i == 0:
-                    continue
-                elif i == 1:
-                    table = '{0}{1}</thead><tbody>'.format(table, tr)
+                if i < 2:
+                    if i == 0 and USE_DAY_OF_THE_WEEK:
+                        table = '{0}{1}</thead><tbody>'.format(table, tr)
+                    elif i == 1 and not USE_DAY_OF_THE_WEEK:
+                        table = '{0}{1}</thead><tbody>'.format(table, tr)
                 else:
                     td_temp = ''
                     for td in tr.find_all('td'):
